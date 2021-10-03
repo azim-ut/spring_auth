@@ -1,0 +1,10 @@
+/auth/.mvn
+/auth/mvnw
+/auth/mvnw.cmd
+/client/mvnw.cmd
+/client/.mvn
+/client/client.iml
+/client/HELP.md
+/client/mvnw
+/ui/ui.iml
+/ui/.nuxt

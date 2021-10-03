@@ -1,0 +1,23 @@
+server:
+  port: 8088
+
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/auth
+    username: root
+    password: root
+
+auth:
+  cookie:
+    auth: AUTH-TOKEN
+    refresh: REFRESH-TOKEN
+    secret: v;df;lkdafndsl;gfnaeririok[g45ji86uyim
+    expiration-auth: 600000
+    expiration-refresh: 31536000
+    path: /
