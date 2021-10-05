@@ -7,11 +7,11 @@ import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
-@EqualsAndHashCode
 @ToString
-public class RegistrationsRequest {
+@EqualsAndHashCode
+public class RegistrationRequest {
     private final String name;
     private final String email;
     private final String password;
-    private final Boolean checked;
+    private final boolean checked;
 }

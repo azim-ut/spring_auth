@@ -3,7 +3,7 @@ export const state = () => ({
 })
 
 export const getters = {
-  getAccess(state) {
+  getAccess(state){
     return state.access
   }
 }
@@ -16,19 +16,16 @@ export const actions = {
   },
   login(context, data){
     this.$axios.post("/api/v1/auth/login", data).then(res => {
-      window.console.log(res.data)
-      context.dispatch("fetchAccess")
-    })
-  },
-  logout(context){
-    this.$axios.get("/api/v1/auth/logout").then(res => {
-      window.console.log(res.data)
       context.dispatch("fetchAccess")
     })
   },
   registration(context, data){
     this.$axios.post("/api/v1/auth/registration", data).then(res => {
-      window.console.log(res.data)
+      context.dispatch("fetchAccess")
+    })
+  },
+  logout(context){
+    this.$axios.get("/api/v1/auth/logout").then(res => {
       context.dispatch("fetchAccess")
     })
   }

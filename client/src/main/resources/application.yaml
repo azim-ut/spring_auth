@@ -1,7 +1,6 @@
 server:
   port: 8087
 
-
 auth:
   cookie:
     auth: AUTH-TOKEN

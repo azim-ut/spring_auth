@@ -1,13 +1,3 @@
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.auth{
-  margin: 2% 10%;
-}
-
-body, input{
-  font-family: "Calibri Light", sans-serif;
+body{
+  margin: 5%;
 }

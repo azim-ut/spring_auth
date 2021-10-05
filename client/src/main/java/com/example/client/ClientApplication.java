@@ -1,5 +1,6 @@
 package com.example.client;
 
+
 import com.example.client.access.CurrentUserProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.SpringApplication;
@@ -13,18 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "api/v1/client")
 @ResponseBody
-@SpringBootApplication
 @AllArgsConstructor
+@SpringBootApplication
 public class ClientApplication {
 
-	private final CurrentUserProvider currentUserProvider;
+    private final CurrentUserProvider currentUserProvider;
 
-	public static void main(String[] args) {
-		SpringApplication.run(ClientApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ClientApplication.class, args);
+    }
 
-	@GetMapping(path = "access")
-	public ResponseEntity<?> getAccess(){
-		return ResponseEntity.ok(currentUserProvider.get().isEnabled()?"Access granted!":"Forbidden!");
-	};
+    @GetMapping(path = "access")
+    public ResponseEntity<?> getAccess() {
+        return ResponseEntity.ok(currentUserProvider.get().isEnabled() ? "Access granted" : "Forbidden!");
+    }
 }

@@ -1,13 +1,13 @@
 <template>
-  <div class="auth">
-    <h1>{{access}}</h1>
+  <div>
+    <h1>{{ access }}</h1>
     <div>
       Регистрация:
       <form @submit="submitRegistration">
         <input type="text" placeholder="Name" v-model="registrationForm.name"/>
         <input type="text" placeholder="Email" v-model="registrationForm.email"/>
         <input type="password" placeholder="Password" v-model="registrationForm.password"/>
-        <input type="submit" value="Register"/>
+        <input type="submit" value="Зарегистрироваться"/>
       </form>
     </div>
     <div>
@@ -15,11 +15,11 @@
       <form @submit="submitLogin">
         <input type="text" placeholder="Email" v-model="loginForm.email"/>
         <input type="password" placeholder="Password" v-model="loginForm.password"/>
-        <input type="submit" value="Enter"/>
+        <input type="submit" value="Вход"/>
       </form>
     </div>
     <div>
-      <input type="button" @click="submitLogout" value="Выход"/>
+      <input type="button" value="Выход" @click="submitLogout"/>
     </div>
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
   computed: mapGetters({
     access: "user/getAccess"
   }),
-  fetch(){
+  fetch() {
     this.$store.dispatch("user/fetchAccess")
   },
   data() {
@@ -53,11 +53,11 @@ export default {
       this.$store.dispatch("user/logout")
     },
     submitLogin(event) {
-      event.preventDefault()
+      event.preventDefault();
       this.$store.dispatch("user/login", this.loginForm)
     },
     submitRegistration(event) {
-      event.preventDefault()
+      event.preventDefault();
       this.$store.dispatch("user/registration", this.registrationForm)
     }
   }

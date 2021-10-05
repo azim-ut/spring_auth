@@ -15,11 +15,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
+@Order(1)
 @Component
 @Slf4j
-@Order(1)
 @AllArgsConstructor
 public class AccessFilter implements Filter {
 
@@ -28,53 +29,54 @@ public class AccessFilter implements Filter {
     private final Gson gson = new Gson();
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-
-        HttpServletRequest res = (HttpServletRequest) servletRequest;
-        Cookie[] cookies = res.getCookies();
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        Cookie[] cookies = httpServletRequest.getCookies();
         CurrentUser currentUser = new CurrentUser();
+        String authToken = null;
         if (cookies != null) {
-            String authToken = null;
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(jwtSettingsProvider.getCookieAuthTokenName())) {
+            for(Cookie cookie: cookies){
+                if(cookie.getName().equals(jwtSettingsProvider.getCookieAuthTokenName())){
                     authToken = cookie.getValue();
                 }
             }
+        }
 
-            if (authToken != null && !authToken.isEmpty()) {
-                currentUser = fetchRemoteUser(res);
-            }
-
+        if(authToken != null && !authToken.isEmpty()){
+            currentUser = fetchRemoteUser(httpServletRequest);
         }
 
         currentUserProvider.set(currentUser);
-        filterChain.doFilter(servletRequest, servletResponse);
+        chain.doFilter(request, response);
     }
 
-    private CurrentUser fetchRemoteUser(HttpServletRequest res) {
+    private CurrentUser fetchRemoteUser(HttpServletRequest httpServletRequest) {
         try {
             URL url = new URL("http://localhost:8088/api/v1/auth/current");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(2000);
             connection.setReadTimeout(1000);
-            connection.setRequestProperty("Cookie", res.getHeader("Cookie"));
+            connection.setRequestProperty("Cookie", httpServletRequest.getHeader("Cookie"));
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestMethod("GET");
 
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String inputLine;
             StringBuilder content = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
+            while((inputLine = in.readLine()) != null){
                 content.append(inputLine);
             }
             in.close();
 
             connection.disconnect();
 
+
+
             return gson.fromJson(content.toString(), CurrentUser.class);
+
         } catch (IOException e) {
-            log.error(e.getLocalizedMessage());
+            log.error(e.getMessage());
         }
         return new CurrentUser();
     }

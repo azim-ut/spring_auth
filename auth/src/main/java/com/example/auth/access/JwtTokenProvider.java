@@ -3,6 +3,7 @@ package com.example.auth.access;
 import com.example.auth.entity.AppUser;
 import com.example.auth.service.AppUserDetailsService;
 import io.jsonwebtoken.*;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,32 +25,36 @@ public class JwtTokenProvider {
     @Value("${auth.cookie.secret}")
     private String secretKey;
 
+    @Getter
     @Value("${auth.cookie.auth}")
     private String authCookieName;
 
+    @Getter
     @Value("${auth.cookie.refresh}")
     private String refreshCookieName;
 
+    @Getter
     @Value("${auth.cookie.expiration-auth}")
     private Integer authExpirationCookie;
 
+    @Getter
     @Value("${auth.cookie.expiration-refresh}")
     private Integer refreshExpirationCookie;
 
+    @Getter
     @Value("${auth.cookie.path}")
     private String cookiePath;
-
 
     public JwtTokenProvider(AppUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
     @PostConstruct
-    public void init(){
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+    public void init() {
+        this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createAuthToken(String userName, String role){
+    public String createAuthToken(String userName, String role) {
         Claims claims = Jwts.claims().setSubject(userName);
         claims.put("role", role);
         Date now = new Date();
@@ -57,7 +62,8 @@ public class JwtTokenProvider {
         return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(valid).signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 
-    public String createRefreshToken(String userName, String role){
+
+    public String createRefreshToken(String userName, String role) {
         Claims claims = Jwts.claims().setSubject(userName);
         claims.put("role", role);
         Date now = new Date();
@@ -65,17 +71,17 @@ public class JwtTokenProvider {
         return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(valid).signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 
-    public boolean validateToken(String token){
+    public boolean validateToken(String token) {
         try {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return claimsJws.getBody().getExpiration().after(new Date());
         } catch (ExpiredJwtException e) {
-            log.error("Token is expired");
+            log.error(e.getLocalizedMessage());
         }
         return false;
     }
 
-    public Authentication getAuthentication(String token){
+    public Authentication getAuthentication(String token) {
         AppUser appUser = userDetailsService.loadUserByUsername(getUserName(token));
         return new UsernamePasswordAuthenticationToken(appUser, appUser.getPassword(), appUser.getAuthorities());
     }
@@ -84,36 +90,16 @@ public class JwtTokenProvider {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public String resolveToken(HttpServletRequest httpServletRequest){
+    public String resolveToken(HttpServletRequest httpServletRequest) {
         Cookie[] cookies = httpServletRequest.getCookies();
         String res = null;
-        if(cookies != null){
-            for(Cookie cookie: cookies){
-                if(cookie.getName().equals(getAuthCookieName())){
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(getAuthCookieName())) {
                     res = cookie.getValue();
                 }
             }
         }
         return res;
-    }
-
-    public String getAuthCookieName() {
-        return authCookieName;
-    }
-
-    public String getRefreshCookieName() {
-        return refreshCookieName;
-    }
-
-    public Integer getAuthExpirationCookie() {
-        return authExpirationCookie;
-    }
-
-    public Integer getRefreshExpirationCookie() {
-        return refreshExpirationCookie;
-    }
-
-    public String getCookiePath() {
-        return cookiePath;
     }
 }

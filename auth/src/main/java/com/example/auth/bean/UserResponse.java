@@ -4,12 +4,13 @@ import com.example.auth.entity.AppUser;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Getter
 @Setter
-public class UserResponse extends RequestResponse{
+public class UserResponse extends BaseResponse {
     private String name;
     private String email;
-    private Boolean enabled;
+    private boolean enabled;
 
     public UserResponse(AppUser appUser) {
         this.name = appUser.getName();

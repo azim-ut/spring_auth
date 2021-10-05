@@ -1,10 +1,7 @@
 package com.example.auth.entity;
 
-import com.example.auth.bean.RegistrationsRequest;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.example.auth.bean.RegistrationRequest;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +12,7 @@ import java.util.Collections;
 
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode
 @NoArgsConstructor
 @Entity(name = "app_user")
@@ -22,7 +20,7 @@ public class AppUser implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
@@ -33,19 +31,19 @@ public class AppUser implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private AppUserRole userRole;
+    @Enumerated(EnumType.STRING)
+    private AppUserRole role = AppUserRole.USER;
 
     @Column(name = "locked")
-    private boolean locked = false;
+    private boolean locked;
 
     @Column(name = "enabled")
-    private boolean enabled = false;
+    private boolean enabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());
         return Collections.singletonList(authority);
     }
 
@@ -79,10 +77,9 @@ public class AppUser implements UserDetails {
         return enabled;
     }
 
-    public AppUser(RegistrationsRequest registrationsRequest) {
-        this.email = registrationsRequest.getEmail();
-        this.password = registrationsRequest.getPassword();
-        this.userRole = AppUserRole.USER;
-        this.name = registrationsRequest.getName();
+    public AppUser(RegistrationRequest registrationRequest) {
+        this.name = registrationRequest.getName();
+        this.email = registrationRequest.getEmail();
+        this.password = registrationRequest.getPassword();
     }
 }

@@ -1,7 +1,6 @@
 package com.example.auth.service;
 
-import com.example.auth.bean.LoginRequest;
-import com.example.auth.bean.RegistrationsRequest;
+import com.example.auth.bean.RegistrationRequest;
 import com.example.auth.entity.AppUser;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,11 +12,10 @@ public class RegistrationService {
 
     private final AppUserDetailsService appUserDetailsService;
 
-    public AppUser register(RegistrationsRequest registrationsRequest){
-        if(registrationsRequest.getEmail().isEmpty()){
+    public AppUser register(RegistrationRequest registrationRequest) {
+        if(registrationRequest.getEmail().isEmpty()){
             throw new BadCredentialsException("Email is not corrected");
         }
-
-        return appUserDetailsService.signUpUser(new AppUser(registrationsRequest));
+        return appUserDetailsService.signUpUser(new AppUser(registrationRequest));
     }
 }

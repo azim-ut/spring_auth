@@ -1,7 +1,6 @@
 server:
   port: 8088
 
-
 spring:
   jpa:
     hibernate:
@@ -17,7 +16,8 @@ auth:
   cookie:
     auth: AUTH-TOKEN
     refresh: REFRESH-TOKEN
-    secret: v;df;lkdafndsl;gfnaeririok[g45ji86uyim
+    secret: ljhdsl;ghiopbmispvgspmvgjca;qdfs
     expiration-auth: 600000
     expiration-refresh: 31536000
     path: /
+debug: false
